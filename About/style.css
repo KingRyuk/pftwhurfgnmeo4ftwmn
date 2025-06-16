@@ -1,0 +1,148 @@
+body {
+  background-color: #232323;
+}
+
+.logo {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+
+* {
+  font-family: 'DynaPuff', cursive, sans-serif;
+}
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid #2a9d8f;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #2a9d8f;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+
+  nav a {
+    margin-left: 20px;
+    margin-right: 20px;
+    text-decoration: none;
+    color: #b697c2;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+  nav a:hover {
+    color: #752159;
+  }
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+}
+
+.content-wrapper p {
+  flex: 1;
+  margin-right: 20px;
+  margin-top: 50px;
+  text-align: left;
+  max-width: 800px;
+  max-height: 800px;
+}
+
+.support-button img {
+  height: 200px;
+  width: auto;
+  transition: transform 0.3s ease;
+  margin-top: 50px;
+}
+
+.support-button img:hover {
+  transform: scale(1.1);
+}
+
+
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 800%;
+  text-align: center;
+  border-top: 3px solid #2a9d8f;
+  padding: 10px 0;
+  margin-bottom: -200px;
+  margin-left: -400px;
+}
+
+footer p {
+  text-align: right;
+  margin-bottom: 50px;
+  margin-left: 670px;
+}
+
+h1 {
+  text-align: right;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 625px;
+}
+
+.recently-played h3 {
+  color: #b697c2;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 700px) {
+  p {
+    display: none;
+  }
+
+  .support-button {
+    display: block;
+    text-align: center;
+    margin: 0 auto; 
+  }
+
+  .mobile-paragraph {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2rem; 
+    color: #264653;
+  }
+}
+
+@media screen and (min-width: 701px) {
+  .mobile-paragraph {
+    display: none;
+  }
+
+  .support-button {
+    text-align: left;
+  }
+}
