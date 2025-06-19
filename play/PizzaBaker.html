@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dagon - Play</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body style="background: #232323; margin:0;">
+  <header>
+    <a href="../index.html" class="logo-link">
+      <img src="../../logo/2.png" alt="WolfLight" class="logo" />
+    </a>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="../../Games/Index.html">Games</a>
+      <a href="../../About/index.html">About</a>
+    </nav>
+  </header>
+  <main>
+    <div class="play-container">
+      <iframe class="game-iframe" src="../../zgame/PizzaBaker/index.html" allowfullscreen></iframe>
+      <h1 class="game-title">Pizza Baker</h1>
+      <div class="tag-list">
+        <a class="tag" href="../../Games/Index.html?category=High%20Scoring%20Games">High Scoring Games</a>
+        <a class="tag" href="../../Games/Index.html?category=Cooking%20Games">Cooking Games</a>
+        <button id="fullscreen-btn" class="fullscreen-btn" title="Full Screen">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="6" height="2" rx="1" fill="#40815d"/>
+            <rect x="2" y="2" width="2" height="6" rx="1" fill="#40815d"/>
+            <rect x="12" y="2" width="6" height="2" rx="1" fill="#40815d"/>
+            <rect x="16" y="2" width="2" height="6" rx="1" fill="#40815d"/>
+            <rect x="2" y="16" width="6" height="2" rx="1" fill="#40815d"/>
+            <rect x="2" y="12" width="2" height="6" rx="1" fill="#40815d"/>
+            <rect x="12" y="16" width="6" height="2" rx="1" fill="#40815d"/>
+            <rect x="16" y="12" width="2" height="6" rx="1" fill="#40815d"/>
+          </svg>
+          Full Screen
+        </button>
+      </div>
+      <div class="game-description">
+        Pizza Baker is a game where you must Bake the correct Pizzas, or you will be fired. your goal is to make as much money as you can from selling pizzas, and last as many days as possible without being fired.</p>
+        <div class="game-dates" style="margin-top:16px; font-size:0.95em; color:#bbddd1;">
+          <div>Date Published: 15/06/2025</div>
+          <div>Last Updated: 15/06/2025</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Prevent arrow keys from scrolling the page
+    window.addEventListener('keydown', function(e) {
+      // 37: left, 38: up, 39: right, 40: down
+      if ([37, 38, 39, 40].includes(e.keyCode)) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Fullscreen button logic
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const gameIframe = document.querySelector('.game-iframe');
+    fullscreenBtn.addEventListener('click', function() {
+      if (gameIframe.requestFullscreen) {
+        gameIframe.requestFullscreen();
+      } else if (gameIframe.webkitRequestFullscreen) {
+        gameIframe.webkitRequestFullscreen();
+      } else if (gameIframe.msRequestFullscreen) {
+        gameIframe.msRequestFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>
