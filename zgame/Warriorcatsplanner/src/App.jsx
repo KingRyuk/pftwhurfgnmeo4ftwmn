@@ -455,6 +455,20 @@ export default function App() {
     setCustomCatImages(entries => entries.map(({ key, url }) => ({ key, url })));
   }, [customCatImages]);
 
+  function handleDeleteSave(name) {
+    const confirmed = window.confirm(`Are you sure you want to delete the save '${name}'?`);
+    if (!confirmed) return;
+
+    const updatedSavedNames = savedNames.filter(savedName => savedName !== name);
+    setSavedNames(updatedSavedNames);
+
+    // Remove the save from storage
+    const planners = listPlanners();
+    if (planners.includes(name)) {
+      localStorage.removeItem(name);
+    }
+  }
+
   return (
     <div className="app-container">
       <Header onLoad={handleLoad} />
@@ -482,9 +496,9 @@ export default function App() {
             {savedNames.length === 0 ? <div>No saves found.</div> : (
               <ul style={{listStyle:'none',padding:0}}>
                 {savedNames.map(name => (
-                  <li key={name}>
-                    <button className="button" style={{margin:'4px 0',width:'100%'}} onClick={() => doLoad(name)}>{name}</button>
-                    <button className="button" style={{margin:'4px 0',width:'100%'}} onClick={() => handleDeleteSave(name)}>Delete</button>
+                  <li key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <button className="button" style={{ margin: '4px 0', flexGrow: 1 }} onClick={() => doLoad(name)}>{name}</button>
+                    <button className="button" style={{ margin: '4px 0', marginLeft: '8px', padding: '4px 8px' }} onClick={() => handleDeleteSave(name)}>🗑️</button>
                   </li>
                 ))}
               </ul>
