@@ -494,13 +494,11 @@ export default function App() {
               <textarea value={newClan.desc} onChange={e=>setNewClan({...newClan,desc:e.target.value})} />
             </label>
             <label>Logo
-              <select value={newClan.logo} onChange={e => {
-                setNewClan({ ...newClan, logo: e.target.value });
-              }}>
+              <select value={newClan.logo} onChange={e => setNewClan({ ...newClan, logo: e.target.value })}>
                 <option value="">(None)</option>
                 {clanLogoOptions.map(opt => (
                   <option key={opt} value={opt}>
-                    {opt.startsWith('clanlogo_') ? 'Custom Logo' : opt}
+                    <img src={getImageUrl(opt)} alt="logo" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }} />
                   </option>
                 ))}
               </select>
@@ -546,6 +544,14 @@ export default function App() {
               <input type="number" min="0" value={newCat.deathAge} onChange={e=>setNewCat({...newCat,deathAge:e.target.value})} />
             </label>
             <label>Image
+              <select value={newCat.image} onChange={e => setNewCat({ ...newCat, image: e.target.value })}>
+                <option value="">(None)</option>
+                {catImageOptions.map(opt => (
+                  <option key={opt} value={opt}>
+                    <img src={getImageUrl(opt)} alt="cat" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }} />
+                  </option>
+                ))}
+              </select>
               <ImageUploader
                 label="Upload Cat Image"
                 imageKey={newCat.image}
