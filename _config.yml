@@ -1,0 +1,4 @@
+exclude:
+  - node_modules
+  - zgame/Warriorcatsplanner/node_modules
+  - zgame/Warriorcatsplanner/**/*.md
