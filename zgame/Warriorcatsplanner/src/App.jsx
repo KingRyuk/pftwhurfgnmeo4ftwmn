@@ -428,14 +428,14 @@ export default function App() {
               <textarea value={newClan.desc} onChange={e=>setNewClan({...newClan,desc:e.target.value})} />
             </label>
             <label>Logo
-              <div style={{display:'flex',alignItems:'center',gap:8}}>
-                <select style={{flex:1}} value={newClan.logo} onChange={e => setNewClan({ ...newClan, logo: e.target.value })}>
-                  <option value="">(None)</option>
-                  {clanLogoOptions.map(opt => (
-                    <option key={opt} value={opt}>{opt.startsWith('clanlogo_') ? 'Custom Logo' : opt.replace('clan logos/','').replace('.png','')}</option>
-                  ))}
-                </select>
-                <button type="button" className="button" style={{padding:'0 8px',height:32}} onClick={() => document.getElementById('clan-logo-upload').click()}>Upload</button>
+              <select value={newClan.logo} onChange={e => setNewClan({ ...newClan, logo: e.target.value })}>
+                <option value="">(None)</option>
+                {clanLogoOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt.startsWith('clanlogo_') ? 'Custom Logo' : opt.replace('clan logos/','').replace('.png','')}</option>
+                ))}
+              </select>
+              <div style={{marginTop:8}}>
+                <button type="button" className="button" style={{width:'100%'}} onClick={() => document.getElementById('clan-logo-upload').click()}>Upload Image</button>
                 <input id="clan-logo-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
                   const file = e.target.files[0];
                   if (file) {
@@ -506,14 +506,14 @@ export default function App() {
               <input type="number" min="0" value={newCat.deathAge} onChange={e=>setNewCat({...newCat,deathAge:e.target.value})} />
             </label>
             <label>Image
-              <div style={{display:'flex',alignItems:'center',gap:8}}>
-                <select style={{flex:1}} value={newCat.image} onChange={e => setNewCat({ ...newCat, image: e.target.value })}>
-                  <option value="">(None)</option>
-                  {catImageOptions.map(opt => (
-                    <option key={opt} value={opt}>{opt.startsWith('catimg_') ? 'Custom Image' : opt.replace('Cat pictures/','')}</option>
-                  ))}
-                </select>
-                <button type="button" className="button" style={{padding:'0 8px',height:32}} onClick={() => document.getElementById('cat-image-upload').click()}>Upload</button>
+              <select value={newCat.image} onChange={e => setNewCat({ ...newCat, image: e.target.value })}>
+                <option value="">(None)</option>
+                {catImageOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt.startsWith('catimg_') ? 'Custom Image' : opt.replace('Cat pictures/','')}</option>
+                ))}
+              </select>
+              <div style={{marginTop:8}}>
+                <button type="button" className="button" style={{width:'100%'}} onClick={() => document.getElementById('cat-image-upload').click()}>Upload Image</button>
                 <input id="cat-image-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
                   const file = e.target.files[0];
                   if (file) {
