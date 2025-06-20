@@ -390,10 +390,11 @@ export default function App() {
             onAddCat={handleAddCat}
             onEditClan={handleEditClan}
             onEditCat={handleEditCat}
+            getImageUrl={getImageUrl}
           />
           <CopyTextButton label="📋 Copy Living Cats" onCopy={handleCopyLiving} />
           <CopyTextButton label="📋 Copy Dead Cats" onCopy={handleCopyDead} />
-          <DeadClans deadClans={deadClans} />
+          <DeadClans deadClans={deadClans} getImageUrl={getImageUrl} />
           <MoonControlBar moon={moon} onSkipMoon={handleSkipMoon} onBackMoon={handleBackMoon} />
         </main>
       </div>
