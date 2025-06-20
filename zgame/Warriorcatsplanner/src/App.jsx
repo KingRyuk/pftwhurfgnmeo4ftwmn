@@ -5,6 +5,7 @@ import ClanList from "./components/ClanList.jsx";
 import DeadClans from "./components/DeadClans.jsx";
 import MoonControlBar from "./components/MoonControlBar.jsx";
 import CopyTextButton from "./components/CopyTextButton.jsx";
+import ImageUploader from "./components/ImageUploader";
 import { savePlanner, loadPlanner, listPlanners } from "./utils/storage.js";
 import { copyText } from "./utils/clipboard.js";
 import "./styles.css";
@@ -94,12 +95,47 @@ export default function App() {
   const [customClanLogos, setCustomClanLogos] = useState([]); // [{key, url}]
   const [customCatImages, setCustomCatImages] = useState([]); // [{key, url}]
 
+  function migrateImageKey(key, type) {
+    // If already a full URL or custom key, return as is
+    if (!key) return key;
+    if (key.startsWith('http') || key.startsWith('clanlogo_') || key.startsWith('catimg_')) return key;
+    // Map old local paths to correct URLs
+    const clanLogoMap = {
+      // If you want a mapping, use key-value pairs like:
+      // 'oldKey': 'newUrl',
+    };
+    const catImageMap = {
+      // If you want a mapping, use key-value pairs like:
+      // 'oldKey': 'newUrl',
+    };
+    if (type === 'clanlogo') return clanLogoMap[key] || key;
+    if (type === 'catimg') return catImageMap[key] || key;
+    return key;
+  }
+
   React.useEffect(() => {
     // Load custom images from IndexedDB on mount
     (async () => {
       const entries = await getAllImageEntriesFromDB();
       setCustomClanLogos(entries.filter(([k]) => k.startsWith("clanlogo_")).map(([k, url]) => ({ key: k, url })));
       setCustomCatImages(entries.filter(([k]) => k.startsWith("catimg_")).map(([k, url]) => ({ key: k, url })));
+      // Migrate any old local image paths in clans/cats
+      setClans(clans => clans.map(clan => ({
+        ...clan,
+        logo: migrateImageKey(clan.logo, 'clanlogo'),
+        cats: (clan.cats || []).map(cat => ({
+          ...cat,
+          image: migrateImageKey(cat.image, 'catimg')
+        }))
+      })));
+      setDeadClans(deadClans => deadClans.map(clan => ({
+        ...clan,
+        logo: migrateImageKey(clan.logo, 'clanlogo'),
+        cats: (clan.cats||[]).map(cat => ({
+          ...cat,
+          image: migrateImageKey(cat.image, 'catimg')
+        }))
+      })));
     })();
   }, []);
 
@@ -131,7 +167,16 @@ export default function App() {
   function getImageUrl(key) {
     // If key is a custom key, get its data URL, else return as is
     const custom = [...customClanLogos, ...customCatImages].find(img => img.key === key);
-    return custom ? custom.url : key;
+    const url = custom ? custom.url : key;
+    if (key) {
+      // Debug log for image loading
+      console.log('getImageUrl:', { key, url, customClanLogos, customCatImages });
+    }
+    // Fallback to a blank image if not found
+    if (!url || url === key && (key.startsWith('clanlogo_') || key.startsWith('catimg_'))) {
+      return 'https://i.postimg.cc/nz40rfZh/blank.png';
+    }
+    return url;
   }
 
   // Save planner
@@ -379,6 +424,34 @@ export default function App() {
       ]
     : [...defaultRanks];
 
+  // Add image upload handlers
+  async function handleImageUpload(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result;
+      const key = `${type}_${Date.now()}`;
+      await saveImageToDB(key, dataUrl);
+
+      if (type === "clanlogo") {
+        setCustomClanLogos((prev) => [...prev, { key, url: dataUrl }]);
+      } else if (type === "catimg") {
+        setCustomCatImages((prev) => [...prev, { key, url: dataUrl }]);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  React.useEffect(() => {
+    console.log('Rendering ImageUploader component for newCat.image:', newCat.image);
+  }, [newCat.image]);
+
+  React.useEffect(() => {
+    console.log('Rendering ImageUploader component for newClan.logo:', newClan.logo);
+  }, [newClan.logo]);
+
   return (
     <div className="app-container">
       <Header onLoad={handleLoad} />
@@ -429,34 +502,28 @@ export default function App() {
               <textarea value={newClan.desc} onChange={e=>setNewClan({...newClan,desc:e.target.value})} />
             </label>
             <label>Logo
-              <select value={newClan.logo} onChange={e => setNewClan({ ...newClan, logo: e.target.value })}>
+              <select value={newClan.logo} onChange={e => {
+                setNewClan({ ...newClan, logo: e.target.value });
+              }}>
                 <option value="">(None)</option>
                 {clanLogoOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt.startsWith('clanlogo_') ? 'Custom Logo' : opt.replace('clan logos/','').replace('.png','')}</option>
+                  <option key={opt} value={opt}>
+                    {opt.startsWith('clanlogo_') ? 'Custom Logo' : opt}
+                  </option>
                 ))}
               </select>
-              <div style={{marginTop:8}}>
-                <button type="button" className="button" style={{width:'100%'}} onClick={() => document.getElementById('clan-logo-upload').click()}>Upload Image</button>
-                <input id="clan-logo-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = async ev => {
-                      const dataUrl = ev.target.result;
-                      const key = `clanlogo_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-                      await saveImageToDB(key, dataUrl);
-                      setCustomClanLogos(logos => [...logos, { key, url: dataUrl }]);
-                      setNewClan(clan => ({ ...clan, logo: key }));
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                  e.target.value = '';
-                }} />
+              <div className="image-uploader-container" style={{marginTop:8}}>
+                <ImageUploader
+                  label="Upload Clan Logo"
+                  imageKey={newClan.logo}
+                  onUpload={(e) => handleImageUpload(e, "clanlogo")}
+                  getImageUrl={getImageUrl}
+                />
               </div>
             </label>
             <div className="form-actions">
               <button className="button" type="submit">{editClanIdx !== null ? 'Save' : 'Create'}</button>
-              <button className="button" type="button" onClick={()=>{setShowCreateClan(false);setEditClanIdx(null);}}>Cancel</button>
+              <button className="button" type="button" onClick={() => { setShowCreateClan(false); setEditClanIdx(null); }}>Cancel</button>
             </div>
           </form>
         </div>
@@ -476,13 +543,11 @@ export default function App() {
               <input type="number" min="0" value={newCat.age} onChange={e=>setNewCat({...newCat,age:Number(e.target.value)})} required />
             </label>
             <label>Rank
-              <select value={newCat.rank === "Custom..." ? "Custom..." : newCat.rank} onChange={e=>{
-                if (e.target.value === "Custom...") {
-                  setCustomRank("");
-                  setNewCat({...newCat, rank: ""});
+              <select value={ranks.includes(newCat.rank) ? newCat.rank : 'Custom...'} onChange={e => {
+                if (e.target.value === 'Custom...') {
+                  setNewCat({ ...newCat, rank: '' });
                 } else {
-                  setCustomRank("");
-                  setNewCat({...newCat, rank: e.target.value});
+                  setNewCat({ ...newCat, rank: e.target.value });
                 }
               }}>
                 {ranks.map(rank => (
@@ -490,16 +555,14 @@ export default function App() {
                 ))}
                 <option value="Custom...">Custom...</option>
               </select>
-              {newCat.rank === "" && (
+              {(!ranks.includes(newCat.rank) || newCat.rank === '') && (
                 <input
                   type="text"
                   placeholder="Enter custom rank"
-                  value={customRank}
-                  onChange={e => {
-                    setCustomRank(e.target.value);
-                    setNewCat({...newCat, rank: e.target.value});
-                  }}
+                  value={newCat.rank}
+                  onChange={e => setNewCat({ ...newCat, rank: e.target.value })}
                   style={{marginTop:4, width:'100%'}}
+                  autoFocus
                 />
               )}
             </label>
@@ -507,34 +570,16 @@ export default function App() {
               <input type="number" min="0" value={newCat.deathAge} onChange={e=>setNewCat({...newCat,deathAge:e.target.value})} />
             </label>
             <label>Image
-              <select value={newCat.image} onChange={e => setNewCat({ ...newCat, image: e.target.value })}>
-                <option value="">(None)</option>
-                {catImageOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt.startsWith('catimg_') ? 'Custom Image' : opt.replace('Cat pictures/','')}</option>
-                ))}
-              </select>
-              <div style={{marginTop:8}}>
-                <button type="button" className="button" style={{width:'100%'}} onClick={() => document.getElementById('cat-image-upload').click()}>Upload Image</button>
-                <input id="cat-image-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = async ev => {
-                      const dataUrl = ev.target.result;
-                      const key = `catimg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-                      await saveImageToDB(key, dataUrl);
-                      setCustomCatImages(imgs => [...imgs, { key, url: dataUrl }]);
-                      setNewCat(cat => ({ ...cat, image: key }));
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                  e.target.value = '';
-                }} />
-              </div>
+              <ImageUploader
+                label="Upload Cat Image"
+                imageKey={newCat.image}
+                onUpload={(e) => handleImageUpload(e, "catimg")}
+                getImageUrl={getImageUrl}
+              />
             </label>
             <div className="form-actions">
               <button className="button" type="submit">{editCat.clanIdx !== null ? 'Save' : 'Add'}</button>
-              <button className="button" type="button" onClick={()=>{setShowAddCat(false);setEditCat({clanIdx:null,catIdx:null});}}>Cancel</button>
+              <button className="button" type="button" onClick={() => { setShowAddCat(false); setEditCat({ clanIdx: null, catIdx: null }); }}>Cancel</button>
             </div>
           </form>
         </div>
