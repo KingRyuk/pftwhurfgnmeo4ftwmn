@@ -428,35 +428,30 @@ export default function App() {
               <textarea value={newClan.desc} onChange={e=>setNewClan({...newClan,desc:e.target.value})} />
             </label>
             <label>Logo
-              <select value={newClan.logo} onChange={e => {
-                if (e.target.value === '__upload__') {
-                  document.getElementById('clan-logo-upload').click();
-                } else {
-                  setNewClan({ ...newClan, logo: e.target.value });
-                }
-              }}>
-                <option value="">(None)</option>
-                {clanLogoOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt.startsWith('clanlogo_') ? 'Custom Logo' : opt.replace('clan logos/','').replace('.png','')}</option>
-                ))}
-                <option value="__upload__">Upload...</option>
-              </select>
-              <input id="clan-logo-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = async ev => {
-                    const dataUrl = ev.target.result;
-                    const key = `clanlogo_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-                    await saveImageToDB(key, dataUrl);
-                    setCustomClanLogos(logos => [...logos, { key, url: dataUrl }]);
-                    setNewClan(clan => ({ ...clan, logo: key }));
-                  };
-                  reader.readAsDataURL(file);
-                }
-                // Reset value so same file can be uploaded again if needed
-                e.target.value = '';
-              }} />
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <select style={{flex:1}} value={newClan.logo} onChange={e => setNewClan({ ...newClan, logo: e.target.value })}>
+                  <option value="">(None)</option>
+                  {clanLogoOptions.map(opt => (
+                    <option key={opt} value={opt}>{opt.startsWith('clanlogo_') ? 'Custom Logo' : opt.replace('clan logos/','').replace('.png','')}</option>
+                  ))}
+                </select>
+                <button type="button" className="button" style={{padding:'0 8px',height:32}} onClick={() => document.getElementById('clan-logo-upload').click()}>Upload</button>
+                <input id="clan-logo-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = async ev => {
+                      const dataUrl = ev.target.result;
+                      const key = `clanlogo_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+                      await saveImageToDB(key, dataUrl);
+                      setCustomClanLogos(logos => [...logos, { key, url: dataUrl }]);
+                      setNewClan(clan => ({ ...clan, logo: key }));
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                  e.target.value = '';
+                }} />
+              </div>
             </label>
             <div className="form-actions">
               <button className="button" type="submit">{editClanIdx !== null ? 'Save' : 'Create'}</button>
@@ -511,35 +506,30 @@ export default function App() {
               <input type="number" min="0" value={newCat.deathAge} onChange={e=>setNewCat({...newCat,deathAge:e.target.value})} />
             </label>
             <label>Image
-              <select value={newCat.image} onChange={e => {
-                if (e.target.value === '__upload__') {
-                  document.getElementById('cat-image-upload').click();
-                } else {
-                  setNewCat({ ...newCat, image: e.target.value });
-                }
-              }}>
-                <option value="">(None)</option>
-                {catImageOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt.startsWith('catimg_') ? 'Custom Image' : opt.replace('Cat pictures/','')}</option>
-                ))}
-                <option value="__upload__">Upload...</option>
-              </select>
-              <input id="cat-image-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = async ev => {
-                    const dataUrl = ev.target.result;
-                    const key = `catimg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-                    await saveImageToDB(key, dataUrl);
-                    setCustomCatImages(imgs => [...imgs, { key, url: dataUrl }]);
-                    setNewCat(cat => ({ ...cat, image: key }));
-                  };
-                  reader.readAsDataURL(file);
-                }
-                // Reset value so same file can be uploaded again if needed
-                e.target.value = '';
-              }} />
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <select style={{flex:1}} value={newCat.image} onChange={e => setNewCat({ ...newCat, image: e.target.value })}>
+                  <option value="">(None)</option>
+                  {catImageOptions.map(opt => (
+                    <option key={opt} value={opt}>{opt.startsWith('catimg_') ? 'Custom Image' : opt.replace('Cat pictures/','')}</option>
+                  ))}
+                </select>
+                <button type="button" className="button" style={{padding:'0 8px',height:32}} onClick={() => document.getElementById('cat-image-upload').click()}>Upload</button>
+                <input id="cat-image-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = async ev => {
+                      const dataUrl = ev.target.result;
+                      const key = `catimg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+                      await saveImageToDB(key, dataUrl);
+                      setCustomCatImages(imgs => [...imgs, { key, url: dataUrl }]);
+                      setNewCat(cat => ({ ...cat, image: key }));
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                  e.target.value = '';
+                }} />
+              </div>
             </label>
             <div className="form-actions">
               <button className="button" type="submit">{editCat.clanIdx !== null ? 'Save' : 'Add'}</button>
