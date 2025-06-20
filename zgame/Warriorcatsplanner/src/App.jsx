@@ -168,14 +168,15 @@ export default function App() {
     // If key is a custom key, get its data URL, else return as is
     const custom = [...customClanLogos, ...customCatImages].find(img => img.key === key);
     const url = custom ? custom.url : key;
-    if (key) {
-      // Debug log for image loading
-      console.log('getImageUrl:', { key, url, customClanLogos, customCatImages });
-    }
-    // Fallback to a blank image if not found
-    if (!url || url === key && (key.startsWith('clanlogo_') || key.startsWith('catimg_'))) {
+
+    // Debug log for image loading
+    console.log('getImageUrl:', { key, url, customClanLogos, customCatImages });
+
+    // Fallback to a blank image if not found or invalid
+    if (!url || (key.startsWith('clanlogo_') || key.startsWith('catimg_')) && !custom) {
       return 'https://i.postimg.cc/nz40rfZh/blank.png';
     }
+
     return url;
   }
 
@@ -515,7 +516,6 @@ export default function App() {
             <div className="form-actions">
               <button className="button" type="submit">{editClanIdx !== null ? 'Save' : 'Create'}</button>
               <button className="button" type="button" onClick={() => { setShowCreateClan(false); setEditClanIdx(null); }}>Cancel</button>
-              <button className="button" type="button" onClick={(e) => handleImageUpload(e, 'clanlogo')}>Upload Clan Logo</button>
             </div>
           </form>
         </div>
