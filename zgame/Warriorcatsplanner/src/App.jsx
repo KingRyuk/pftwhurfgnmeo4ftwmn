@@ -445,6 +445,16 @@ export default function App() {
     console.log('Rendering ImageUploader component for newClan.logo:', newClan.logo);
   }, [newClan.logo]);
 
+  React.useEffect(() => {
+    // Update clan logo options after upload
+    setCustomClanLogos(entries => entries.map(({ key, url }) => ({ key, url })));
+  }, [customClanLogos]);
+
+  React.useEffect(() => {
+    // Update cat image options after upload
+    setCustomCatImages(entries => entries.map(({ key, url }) => ({ key, url })));
+  }, [customCatImages]);
+
   return (
     <div className="app-container">
       <Header onLoad={handleLoad} />
@@ -496,23 +506,38 @@ export default function App() {
               <textarea value={newClan.desc} onChange={e=>setNewClan({...newClan,desc:e.target.value})} />
             </label>
             <label>Logo
-              <select value={newClan.logo} onChange={e => setNewClan({ ...newClan, logo: e.target.value })}>
-                <option value="">(None)</option>
+              <div className="image-dropdown">
                 {clanLogoOptions.map(opt => (
-                  <option key={opt} value={opt}>
-                    <img src={getImageUrl(opt)} alt="logo" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }} />
-                  </option>
+                  <div
+                    key={opt}
+                    className={`image-option ${newClan.logo === opt ? 'selected' : ''}`}
+                    onClick={() => setNewClan({ ...newClan, logo: opt })}
+                    style={{
+                      display: 'inline-block',
+                      margin: '4px',
+                      cursor: 'pointer',
+                      border: newClan.logo === opt ? '2px solid #007BFF' : '1px solid #ccc',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={getImageUrl(opt)}
+                      alt="logo"
+                      style={{ width: 40, height: 40, objectFit: 'cover' }}
+                    />
+                  </div>
                 ))}
-              </select>
-              <div className="image-uploader-container" style={{marginTop:8}}>
-                <ImageUploader
-                  label="Upload Clan Logo"
-                  imageKey={newClan.logo}
-                  onUpload={(e) => handleImageUpload(e, "clanlogo")}
-                  getImageUrl={getImageUrl}
-                />
               </div>
             </label>
+            <div className="image-uploader-container" style={{marginTop:8}}>
+              <ImageUploader
+                label="Upload Clan Logo"
+                imageKey={newClan.logo}
+                onUpload={(e) => handleImageUpload(e, "clanlogo")}
+                getImageUrl={getImageUrl}
+              />
+            </div>
             <div className="form-actions">
               <button className="button" type="submit">{editClanIdx !== null ? 'Save' : 'Create'}</button>
               <button className="button" type="button" onClick={() => { setShowCreateClan(false); setEditClanIdx(null); }}>Cancel</button>
@@ -545,21 +570,36 @@ export default function App() {
               <input type="number" min="0" value={newCat.deathAge} onChange={e=>setNewCat({...newCat,deathAge:e.target.value})} />
             </label>
             <label>Image
-              <select value={newCat.image} onChange={e => setNewCat({ ...newCat, image: e.target.value })}>
-                <option value="">(None)</option>
+              <div className="image-dropdown">
                 {catImageOptions.map(opt => (
-                  <option key={opt} value={opt}>
-                    <img src={getImageUrl(opt)} alt="cat" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }} />
-                  </option>
+                  <div
+                    key={opt}
+                    className={`image-option ${newCat.image === opt ? 'selected' : ''}`}
+                    onClick={() => setNewCat({ ...newCat, image: opt })}
+                    style={{
+                      display: 'inline-block',
+                      margin: '4px',
+                      cursor: 'pointer',
+                      border: newCat.image === opt ? '2px solid #007BFF' : '1px solid #ccc',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={getImageUrl(opt)}
+                      alt="cat"
+                      style={{ width: 40, height: 40, objectFit: 'cover' }}
+                    />
+                  </div>
                 ))}
-              </select>
-              <ImageUploader
-                label="Upload Cat Image"
-                imageKey={newCat.image}
-                onUpload={(e) => handleImageUpload(e, "catimg")}
-                getImageUrl={getImageUrl}
-              />
+              </div>
             </label>
+            <ImageUploader
+              label="Upload Cat Image"
+              imageKey={newCat.image}
+              onUpload={(e) => handleImageUpload(e, "catimg")}
+              getImageUrl={getImageUrl}
+            />
             <div className="form-actions">
               <button className="button" type="submit">{editCat.clanIdx !== null ? 'Save' : 'Add'}</button>
               <button className="button" type="button" onClick={() => { setShowAddCat(false); setEditCat({ clanIdx: null, catIdx: null }); }}>Cancel</button>
