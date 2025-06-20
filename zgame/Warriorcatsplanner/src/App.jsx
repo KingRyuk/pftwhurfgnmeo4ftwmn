@@ -473,6 +473,7 @@ export default function App() {
                 {savedNames.map(name => (
                   <li key={name}>
                     <button className="button" style={{margin:'4px 0',width:'100%'}} onClick={() => doLoad(name)}>{name}</button>
+                    <button className="button" style={{margin:'4px 0',width:'100%'}} onClick={() => handleDeleteSave(name)}>Delete</button>
                   </li>
                 ))}
               </ul>
