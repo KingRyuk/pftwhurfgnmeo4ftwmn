@@ -9,6 +9,72 @@ import { savePlanner, loadPlanner, listPlanners } from "./utils/storage.js";
 import { copyText } from "./utils/clipboard.js";
 import "./styles.css";
 
+// IndexedDB helpers
+function openImageDB() {
+  return new Promise((resolve, reject) => {
+    const request = window.indexedDB.open("WarriorCatsImages", 1);
+    request.onupgradeneeded = function (event) {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("images")) {
+        db.createObjectStore("images");
+      }
+    };
+    request.onsuccess = function (event) {
+      resolve(event.target.result);
+    };
+    request.onerror = function (event) {
+      reject(event);
+    };
+  });
+}
+async function saveImageToDB(key, dataUrl) {
+  const db = await openImageDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(["images"], "readwrite");
+    const store = tx.objectStore("images");
+    store.put(dataUrl, key);
+    tx.oncomplete = resolve;
+    tx.onerror = reject;
+  });
+}
+async function getImageFromDB(key) {
+  const db = await openImageDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(["images"], "readonly");
+    const store = tx.objectStore("images");
+    const req = store.get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = reject;
+  });
+}
+async function getAllImagesFromDB() {
+  const db = await openImageDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(["images"], "readonly");
+    const store = tx.objectStore("images");
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = reject;
+  });
+}
+async function getAllImageEntriesFromDB() {
+  const db = await openImageDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(["images"], "readonly");
+    const store = tx.objectStore("images");
+    const req = store.getAllKeys();
+    const valuesReq = store.getAll();
+    req.onsuccess = () => {
+      valuesReq.onsuccess = () => {
+        const keys = req.result;
+        const values = valuesReq.result;
+        resolve(keys.map((k, i) => [k, values[i]]));
+      };
+    };
+    req.onerror = reject;
+  });
+}
+
 export default function App() {
   // App-level state
   const [clans, setClans] = useState([]); // [{name, logo, desc, cats: []}]
@@ -25,43 +91,58 @@ export default function App() {
   const [editCat, setEditCat] = useState({ clanIdx: null, catIdx: null });
 
   // Add these lists for logo and cat image options
+  const [customClanLogos, setCustomClanLogos] = useState([]); // [{key, url}]
+  const [customCatImages, setCustomCatImages] = useState([]); // [{key, url}]
+
+  React.useEffect(() => {
+    // Load custom images from IndexedDB on mount
+    (async () => {
+      const entries = await getAllImageEntriesFromDB();
+      setCustomClanLogos(entries.filter(([k]) => k.startsWith("clanlogo_")).map(([k, url]) => ({ key: k, url })));
+      setCustomCatImages(entries.filter(([k]) => k.startsWith("catimg_")).map(([k, url]) => ({ key: k, url })));
+    })();
+  }, []);
+
   const clanLogoOptions = [
-    "clan logos/blank.png",
-    "clan logos/Riverclan.png",
-    "clan logos/shadowclan.png",
-    "clan logos/skyclan.png",
-    "clan logos/starclan.png",
-    "clan logos/thunderclan.png",
-    "clan logos/Windclan.png"
+    ...customClanLogos.map(img => img.key),
+    "https://i.postimg.cc/nz40rfZh/blank.png",
+    "https://i.postimg.cc/nV13tx0d/thunderclan.png",
+    "https://i.postimg.cc/90c1qgFt/shadowclan.png",
+    "https://i.postimg.cc/HssBYNNT/Windclan.png",
+    "https://i.postimg.cc/GtMPTcfd/Riverclan.png",
+    "https://i.postimg.cc/5ytLVh2G/skyclan.png",
+    "https://i.postimg.cc/GtzKPP40/starclan.png"
   ];
   const catImageOptions = [
-    "Cat pictures/blackcat1.jpg",
-    "Cat pictures/blackcat2.jpg",
-    "Cat pictures/blackFluffy1.jpg",
-    "Cat pictures/blackkitten1.jpg",
-    "Cat pictures/browncat1.jpg",
-    "Cat pictures/calico1.jpg",
-    "Cat pictures/calicofluffy1.jpg",
-    "Cat pictures/calicokittenfluffy1.jpg",
-    "Cat pictures/fluffy tortiseshell1.jpg",
-    "Cat pictures/fluffygingercat2.jpg",
-    "Cat pictures/fluffygreycat1.jpg",
-    "Cat pictures/gingercat1.jpg",
-    "Cat pictures/gingercat2.jpg",
-    "Cat pictures/gingerfluffy1.jpg",
-    "Cat pictures/gingerkittenfluffy.jpg",
-    "Cat pictures/grey1.jpg",
-    "Cat pictures/tortoiseshell1.jpg",
-    "Cat pictures/tortoiseshellkitten1.jpg",
-    "Cat pictures/white1.jpg",
-    "Cat pictures/whitefluffy.jpg"
+    ...customCatImages.map(img => img.key),
+    "https://i.postimg.cc/hJXDC1KC/fluffygingercat2.jpg",
+    "https://i.postimg.cc/k68nCM6K/fluffygreycat1.jpg",
+    "https://i.postimg.cc/9whcQ3ZS/gingercat1.jpg",
+    "https://i.postimg.cc/JH5MyTQh/gingercat2.jpg",
+    "https://i.postimg.cc/pyf21Ttt/gingerfluffy1.jpg",
+    "https://i.postimg.cc/kB7nrmnR/gingerkittenfluffy.jpg",
+    "https://i.postimg.cc/mPDBDy1b/grey1.jpg",
+    "https://i.postimg.cc/VJV1b0XX/tortoiseshell1.jpg",
+    "https://i.postimg.cc/jWnT6qhm/tortoiseshellkitten1.jpg",
+    "https://i.postimg.cc/TL86t87w/white1.jpg",
+    "https://i.postimg.cc/hz9qwC60/whitefluffy.jpg"
   ];
+
+  function getImageUrl(key) {
+    // If key is a custom key, get its data URL, else return as is
+    const custom = [...customClanLogos, ...customCatImages].find(img => img.key === key);
+    return custom ? custom.url : key;
+  }
 
   // Save planner
   function handleSave() {
     const name = prompt("Name this save:");
     if (!name) return;
-    savePlanner(name, { clans, deadClans, moon });
+    // Save custom images used in this save
+    const usedClanLogos = clans.map(c => c.logo).filter(l => l && l.startsWith('clanlogo_'));
+    const usedCatImages = clans.flatMap(c => (c.cats||[]).map(cat => cat.image)).filter(i => i && i.startsWith('catimg_'));
+    // Save only the keys, images are already in IndexedDB
+    savePlanner(name, { clans, deadClans, moon, usedClanLogos, usedCatImages });
     alert("Saved as '" + name + "'.");
   }
 
@@ -77,6 +158,25 @@ export default function App() {
       setDeadClans(data.deadClans || []);
       setMoon(data.moon || 1);
       setShowLoad(false);
+      // Load custom images for this save
+      if (data.usedClanLogos || data.usedCatImages) {
+        (async () => {
+          if (data.usedClanLogos) {
+            const logoEntries = await Promise.all(data.usedClanLogos.map(async key => [key, await getImageFromDB(key)]));
+            setCustomClanLogos(logos => {
+              const newOnes = logoEntries.filter(([k, url]) => url && !logos.some(l => l.key === k)).map(([k, url]) => ({ key: k, url }));
+              return [...logos, ...newOnes];
+            });
+          }
+          if (data.usedCatImages) {
+            const imgEntries = await Promise.all(data.usedCatImages.map(async key => [key, await getImageFromDB(key)]));
+            setCustomCatImages(imgs => {
+              const newOnes = imgEntries.filter(([k, url]) => url && !imgs.some(i => i.key === k)).map(([k, url]) => ({ key: k, url }));
+              return [...imgs, ...newOnes];
+            });
+          }
+        })();
+      }
     }
   }
 
@@ -259,6 +359,26 @@ export default function App() {
     copyText(text);
   }
 
+  const defaultRanks = [
+    "Leader",
+    "Medicine Cat",
+    "Deputy",
+    // custom rank will be inserted here
+    "Warrior",
+    "Apprentice",
+    "Queen",
+    "Kit",
+    "Elder"
+  ];
+  const [customRank, setCustomRank] = useState("");
+  const ranks = customRank
+    ? [
+        ...defaultRanks.slice(0, 3),
+        customRank,
+        ...defaultRanks.slice(3)
+      ]
+    : [...defaultRanks];
+
   return (
     <div className="app-container">
       <Header onLoad={handleLoad} />
@@ -311,9 +431,23 @@ export default function App() {
               <select value={newClan.logo} onChange={e=>setNewClan({...newClan,logo:e.target.value})}>
                 <option value="">(None)</option>
                 {clanLogoOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt.replace('clan logos/','').replace('.png','')}</option>
+                  <option key={opt} value={opt}>{opt.startsWith('clanlogo_') ? 'Custom Logo' : opt.replace('clan logos/','').replace('.png','')}</option>
                 ))}
               </select>
+              <input type="file" accept="image/*" style={{marginTop:8}} onChange={async e => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = async ev => {
+                    const dataUrl = ev.target.result;
+                    const key = `clanlogo_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+                    await saveImageToDB(key, dataUrl);
+                    setCustomClanLogos(logos => [...logos, { key, url: dataUrl }]);
+                    setNewClan(clan => ({ ...clan, logo: key }));
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }} />
             </label>
             <div className="form-actions">
               <button className="button" type="submit">{editClanIdx !== null ? 'Save' : 'Create'}</button>
@@ -337,17 +471,32 @@ export default function App() {
               <input type="number" min="0" value={newCat.age} onChange={e=>setNewCat({...newCat,age:Number(e.target.value)})} required />
             </label>
             <label>Rank
-              <select value={newCat.rank} onChange={e=>setNewCat({...newCat,rank:e.target.value})}>
-                <option>Leader</option>
-                <option>Medicine Cat</option>
-                <option>Deputy</option>
-                <option>Warrior</option>
-                <option>Apprentice</option>
-                <option>Queen</option>
-                <option>Kit</option>
-                <option>Elder</option>
-                <option>Custom</option>
+              <select value={newCat.rank === "Custom..." ? "Custom..." : newCat.rank} onChange={e=>{
+                if (e.target.value === "Custom...") {
+                  setCustomRank("");
+                  setNewCat({...newCat, rank: ""});
+                } else {
+                  setCustomRank("");
+                  setNewCat({...newCat, rank: e.target.value});
+                }
+              }}>
+                {ranks.map(rank => (
+                  <option key={rank} value={rank}>{rank}</option>
+                ))}
+                <option value="Custom...">Custom...</option>
               </select>
+              {newCat.rank === "" && (
+                <input
+                  type="text"
+                  placeholder="Enter custom rank"
+                  value={customRank}
+                  onChange={e => {
+                    setCustomRank(e.target.value);
+                    setNewCat({...newCat, rank: e.target.value});
+                  }}
+                  style={{marginTop:4, width:'100%'}}
+                />
+              )}
             </label>
             <label>Death Age (optional)
               <input type="number" min="0" value={newCat.deathAge} onChange={e=>setNewCat({...newCat,deathAge:e.target.value})} />
@@ -356,9 +505,23 @@ export default function App() {
               <select value={newCat.image} onChange={e=>setNewCat({...newCat,image:e.target.value})}>
                 <option value="">(None)</option>
                 {catImageOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt.replace('Cat pictures/','')}</option>
+                  <option key={opt} value={opt}>{opt.startsWith('catimg_') ? 'Custom Image' : opt.replace('Cat pictures/','')}</option>
                 ))}
               </select>
+              <input type="file" accept="image/*" style={{marginTop:8}} onChange={async e => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = async ev => {
+                    const dataUrl = ev.target.result;
+                    const key = `catimg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+                    await saveImageToDB(key, dataUrl);
+                    setCustomCatImages(imgs => [...imgs, { key, url: dataUrl }]);
+                    setNewCat(cat => ({ ...cat, image: key }));
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }} />
             </label>
             <div className="form-actions">
               <button className="button" type="submit">{editCat.clanIdx !== null ? 'Save' : 'Add'}</button>
