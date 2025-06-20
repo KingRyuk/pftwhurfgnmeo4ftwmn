@@ -408,21 +408,13 @@ export default function App() {
     "Leader",
     "Medicine Cat",
     "Deputy",
-    // custom rank will be inserted here
     "Warrior",
     "Apprentice",
     "Queen",
     "Kit",
     "Elder"
   ];
-  const [customRank, setCustomRank] = useState("");
-  const ranks = customRank
-    ? [
-        ...defaultRanks.slice(0, 3),
-        customRank,
-        ...defaultRanks.slice(3)
-      ]
-    : [...defaultRanks];
+  const ranks = [...defaultRanks];
 
   // Add image upload handlers
   async function handleImageUpload(event, type) {
@@ -524,6 +516,7 @@ export default function App() {
             <div className="form-actions">
               <button className="button" type="submit">{editClanIdx !== null ? 'Save' : 'Create'}</button>
               <button className="button" type="button" onClick={() => { setShowCreateClan(false); setEditClanIdx(null); }}>Cancel</button>
+              <button className="button" type="button" onClick={(e) => handleImageUpload(e, 'clanlogo')}>Upload Clan Logo</button>
             </div>
           </form>
         </div>
@@ -543,28 +536,11 @@ export default function App() {
               <input type="number" min="0" value={newCat.age} onChange={e=>setNewCat({...newCat,age:Number(e.target.value)})} required />
             </label>
             <label>Rank
-              <select value={ranks.includes(newCat.rank) ? newCat.rank : 'Custom...'} onChange={e => {
-                if (e.target.value === 'Custom...') {
-                  setNewCat({ ...newCat, rank: '' });
-                } else {
-                  setNewCat({ ...newCat, rank: e.target.value });
-                }
-              }}>
+              <select value={newCat.rank} onChange={e => setNewCat({ ...newCat, rank: e.target.value })}>
                 {ranks.map(rank => (
                   <option key={rank} value={rank}>{rank}</option>
                 ))}
-                <option value="Custom...">Custom...</option>
               </select>
-              {(!ranks.includes(newCat.rank) || newCat.rank === '') && (
-                <input
-                  type="text"
-                  placeholder="Enter custom rank"
-                  value={newCat.rank}
-                  onChange={e => setNewCat({ ...newCat, rank: e.target.value })}
-                  style={{marginTop:4, width:'100%'}}
-                  autoFocus
-                />
-              )}
             </label>
             <label>Death Age (optional)
               <input type="number" min="0" value={newCat.deathAge} onChange={e=>setNewCat({...newCat,deathAge:e.target.value})} />
@@ -580,6 +556,20 @@ export default function App() {
             <div className="form-actions">
               <button className="button" type="submit">{editCat.clanIdx !== null ? 'Save' : 'Add'}</button>
               <button className="button" type="button" onClick={() => { setShowAddCat(false); setEditCat({ clanIdx: null, catIdx: null }); }}>Cancel</button>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                id="catimg-upload-input"
+                onChange={e => handleImageUpload(e, "catimg")}
+              />
+              <button
+                className="button"
+                type="button"
+                onClick={() => document.getElementById("catimg-upload-input").click()}
+              >
+                Upload Cat Image
+              </button>
             </div>
           </form>
         </div>
