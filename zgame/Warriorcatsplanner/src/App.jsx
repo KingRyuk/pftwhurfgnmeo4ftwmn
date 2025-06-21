@@ -48,7 +48,8 @@ export default function App() {
 "https://i.postimg.cc/jWnT6qhm/tortoiseshellkitten1.jpg",
 "https://i.postimg.cc/TL86t87w/white1.jpg",
 "https://i.postimg.cc/hz9qwC60/whitefluffy.jpg",
-"https://i.postimg.cc/D8DnSbrL/calicofluffy1.jpg",
+"https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png",
+
 
   ];
 
