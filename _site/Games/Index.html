@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games - KingRyuk Games</title>
+  <link rel="stylesheet" href="style.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7103952157206303"
+   crossorigin="anonymous"></script>
+</head>
+<body>
+  <header>
+    <a href="../index.html" class="logo-link">
+      <img src="../logo/2.png" alt="WolfLight" class="logo" />
+    </a>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="Index.html">Games</a>
+      <a href="../About/index.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1 id="category-title">Games</h1>
+    <section id="game-container" class="game-list">
+      <!-- Games will be dynamically inserted here -->
+    </section>
+    <section id="game-display">
+      <!-- Selected game will be displayed here -->
+    </section>
+  </main>
+
+  <script>
+    const games = [
+      {
+        title: "Dragon",
+        thumbnail: "https://i.postimg.cc/s2Mbsrtp/Dragon.png",
+        categories: ["Action Games", "high Scoring Games"],
+        Pageurl: "../play/Dragon.html"
+      },
+      {
+        title: "Wonkey Pigeon",
+        thumbnail: "https://i.postimg.cc/mrKJrnsK/Wonkey-Pigeon.png",
+        categories: ["Action Games", "high Scoring Games", "Animal Games"],
+        Pageurl: "../play/WonkeyPigeon.html"
+      },
+      {
+        title: "Pizza Baker",
+        thumbnail: "https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png",
+        categories: ["Cooking Games", "high Scoring Games"],
+        Pageurl: "../play/PizzaBaker.html"
+      },
+      {
+        title: "Warrior Cats Planner",
+        thumbnail: "https://i.postimg.cc/WbNL16Fm/Warriorcatsplanner.png",
+        categories: ["Tools", "Animal Games"],
+        Pageurl: "../play/WarriorCatsPlanner.html"
+      }
+    ];
+
+    function getCategoryFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("category") || "All Games";
+    }
+
+    function filterGamesByCategory(category) {
+      if (category === "All Games") return games;
+      return games.filter(game => game.categories.includes(category));
+    }
+
+    function displayGames(filteredGames) {
+      const gameContainer = document.getElementById("game-container");
+      const categoryTitle = document.getElementById("category-title");
+      gameContainer.innerHTML = ""; // Clear previous games
+
+      filteredGames.sort((a, b) => a.title.localeCompare(b.title)); // Sort alphabetically
+
+      filteredGames.forEach(game => {
+        const gameElement = document.createElement("div");
+        gameElement.className = "game-item";
+        gameElement.innerHTML = `
+          <img src="${game.thumbnail}" alt="${game.title}" class="game-thumbnail">
+          <p>${game.title}</p>
+        `;
+
+        const clickSound = new Audio("../logo/digital-click-357350.mp3");
+        gameElement.addEventListener("mouseover", () => {
+          clickSound.play();
+        });
+
+        gameElement.addEventListener("click", () => {
+          const gameDisplay = document.getElementById("game-display");
+          gameContainer.style.display = "none";
+          categoryTitle.style.display = "none";
+          disableArrowScroll(true);
+
+          // Redirect to the game's page
+          window.location.href = game.Pageurl;
+        });
+
+        gameContainer.appendChild(gameElement);
+      });
+    }
+
+    // Helper to disable arrow scroll (implement as needed)
+    function disableArrowScroll(disable) {
+      // Example: document.body.style.overflow = disable ? "hidden" : "";
+    }
+
+    // Optionally, get game from URL (implement as needed)
+    function getGameFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("game");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const gameName = getGameFromURL();
+      if (gameName) {
+        // Try to find the game by title (case-insensitive)
+        const selectedGame = games.find(g => g.title.toLowerCase() === gameName.toLowerCase());
+        if (selectedGame) {
+          // Simulate launching the game as if it was clicked
+          const gameDisplay = document.getElementById("game-display");
+          const gameContainer = document.getElementById("game-container");
+          const categoryTitle = document.getElementById("category-title");
+          gameContainer.style.display = "none";
+          categoryTitle.style.display = "none";
+          disableArrowScroll(true);
+          if (selectedGame.swfFile) {
+            let width = "1024";
+            let height = "768";
+            gameDisplay.innerHTML = `
+              <div style="display: flex; justify-content: center; align-items: flex-start; height: 90vh; position: relative;">
+                <object id="game-object" type="application/x-shockwave-flash" data="../swf/${selectedGame.swfFile}" width="${width}" height="${height}">
+                  <param name="movie" value="../swf/${selectedGame.swfFile}">
+                </object>
+              </div>
+              <button id="fullscreen-button" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #00A99D; color: white; border: none; border-radius: 5px; font-family: 'Dynapuff', cursive; font-size: 16px; cursor: pointer;">Full Screen</button>
+            `;
+            const fullscreenButton = document.getElementById("fullscreen-button");
+            fullscreenButton.addEventListener("click", () => {
+              const gameObject = document.getElementById("game-object");
+              if (gameObject.requestFullscreen) {
+                gameObject.requestFullscreen();
+              } else if (gameObject.webkitRequestFullscreen) {
+                gameObject.webkitRequestFullscreen();
+              } else if (gameObject.msRequestFullscreen) {
+                gameObject.msRequestFullscreen();
+              }
+            });
+          } else if (selectedGame.iframeEmbed) {
+            gameDisplay.innerHTML = `
+              <div style="display: flex; justify-content: center; height: 90vh; position: relative;">
+                <iframe src="${selectedGame.iframeEmbed}" frameborder="0" width="1024" height="768" allowfullscreen></iframe>
+              </div>
+              <button id="fullscreen-button" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #00A99D; color: white; border: none; border-radius: 5px; font-family: 'Dynapuff', cursive; font-size: 16px; cursor: pointer;">Full Screen</button>
+            `;
+            const fullscreenButton = document.getElementById("fullscreen-button");
+            fullscreenButton.addEventListener("click", () => {
+              const iframe = gameDisplay.querySelector("iframe");
+              if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+              } else if (iframe.webkitRequestFullscreen) {
+                iframe.webkitRequestFullscreen();
+              } else if (iframe.msRequestFullscreen) {
+                iframe.msRequestFullscreen();
+              }
+            });
+          }
+          return; // Don't show the list if a game is launched
+        }
+      }
+      const category = getCategoryFromURL();
+      document.getElementById("category-title").textContent = category;
+      const filteredGames = filterGamesByCategory(category);
+      displayGames(filteredGames);
+    });
+  </script>
+  <script>
+  (function() {
+    const isExternal = url => {
+      try {
+        const u = new URL(url, window.location.href);
+        return u.hostname !== window.location.hostname;
+      } catch {
+        return true; // malformed URLs considered external
+      }
+    };
+
+    // Intercept window.open
+    const originalOpen = window.open;
+    window.open = function(url, ...args) {
+      if (isExternal(url)) {
+        console.warn('Blocked external link:', url);
+        return null;
+      }
+      return originalOpen.call(window, url, ...args);
+    };
+
+    // Intercept location.assign
+    const originalAssign = window.location.assign;
+    window.location.assign = function(url) {
+      if (isExternal(url)) {
+        console.warn('Blocked external navigation:', url);
+        return;
+      }
+      return originalAssign.call(window.location, url);
+    };
+
+    // Intercept location.href change
+    Object.defineProperty(window.location, 'href', {
+      set(url) {
+        if (isExternal(url)) {
+          console.warn('Blocked href navigation:', url);
+          return;
+        }
+        window.location.assign(url);
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

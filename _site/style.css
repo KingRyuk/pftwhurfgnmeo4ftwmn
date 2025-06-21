@@ -1,0 +1,189 @@
+.logo {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+
+* {
+  font-family: 'DynaPuff', cursive, sans-serif;
+}
+
+body {
+  background-color: #232323;
+}
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid #2a9d8f;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #2a9d8f;
+  }
+
+  nav a {
+    margin-left: 20px;
+    margin-right: 20px;
+    text-decoration: none;
+    color: #b697c2;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+  nav a:hover {
+    color: #752159;
+  }
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.featured-game {
+  max-width: 600px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  border-radius: 10px;
+  overflow: visible; /* Allow the thumbnail to grow beyond the container */
+  transition: box-shadow 0.3s ease;
+}
+
+/* Style the 'Featured' text to make it larger and #b697c2 */
+.featured-game h2 {
+  font-size: 2rem; /* Increase font size */
+  color: #b697c2; /* Set text color to #b697c2 */
+  margin-bottom: 15px; /* Add spacing below the text */
+}
+
+/* Remove padding to ensure the glow starts directly on the thumbnail */
+.featured-game img {
+  padding: 0; /* Remove padding to eliminate the white border */
+  width: 100%;
+  height: 300px; /* Fixed height to prevent resizing */
+  object-fit: cover; /* Ensures the image fills the area without distortion */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for the grow and glow effects */
+}
+
+/* Add a glow effect around the thumbnail on hover */
+.featured-game img:hover {
+  transform: scale(1.05); /* Slightly grow the thumbnail */
+  box-shadow: 0 0 20px 10px rgba(182, 151, 194, 0.8); /* Add a glowing effect directly on the thumbnail */
+}
+
+
+#featured-thumbnail {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+
+
+.game-title {
+  margin-top: 10px;
+  font-size: 1.2em;
+  color: #444;
+}
+
+
+
+.game-thumbnail {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #666;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.recently-played {
+  flex: 1 1 250px;
+  max-width: 250px;
+  margin-top: 20px; 
+}
+
+.recently-played h3 {
+  color: #b697c2;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+@media (max-width: 907px) {
+  .recently-played {
+    display: none;
+  }
+}
+
+.recent-item {
+  background-color: #f4f4f4;
+  height: 80px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: #333;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+  .categories {
+    margin-top: 20px;
+  }
+
+  .categories h3 {
+  text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: #b697c2;
+}
+.category-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  max-width: 900px;  /* Optional: limits max width */
+  margin: 0 auto;
+}
+
+.category-button {
+  aspect-ratio: 3 / 1; /* width:height ratio to keep button shape */
+  width: 100%;
+  text-align: center;
+  background-color: #bbddd1;
+  color: #40815d;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for the grow effect */
+  text-decoration: none; /* Remove underline from category buttons */
+}
+
+.category-button:hover {
+  background-color: #66a18c;
+  transform: scale(1.05); /* Slightly grow the button */
+}
