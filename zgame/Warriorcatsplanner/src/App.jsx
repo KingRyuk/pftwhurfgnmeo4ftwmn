@@ -23,7 +23,7 @@ export default function App() {
   const [editCat, setEditCat] = useState({ clanIdx: null, catIdx: null });
 
   // Define image options for clan logos and cat images
-  const clanLogoOptions = [
+  const [clanLogoOptions, setClanLogoOptions] = useState([
     "https://i.postimg.cc/k65xYZB0/blank.png",
     "https://i.postimg.cc/wybDCVN7/shadowclan.png",
     "https://i.postimg.cc/tnZFpxdD/starclan.png",
@@ -31,9 +31,9 @@ export default function App() {
     "https://i.postimg.cc/xqhKg6YZ/Windclan.png",
     "https://i.postimg.cc/0KwKLqxB/Riverclan.png",
     "https://i.postimg.cc/xJWcGFHy/skyclan.png",
-  ];
+  ]);
 
-  const catImageOptions = [
+  const [catImageOptions, setCatImageOptions] = useState([
 "https://i.postimg.cc/PCrrDk9n/blackcat1.jpg",
 "https://i.postimg.cc/w1fxcGYy/browncat1.jpg",
 "https://i.postimg.cc/NyZgZ2MQ/calicokittenfluffy1.jpg",
@@ -51,7 +51,7 @@ export default function App() {
 "https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png",
 
 
-  ];
+  ]);
 
   // Save planner
   function handleSave() {
@@ -282,6 +282,21 @@ export default function App() {
     }
   }
 
+  // Consolidate image upload functionality
+  function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const uploadedImage = reader.result;
+      // Add the uploaded image to both clan logo and cat image options
+      setClanLogoOptions(prevOptions => [...prevOptions, uploadedImage]);
+      setCatImageOptions(prevOptions => [...prevOptions, uploadedImage]);
+    };
+    reader.readAsDataURL(file);
+  }
+
   return (
     <div className="app-container">
       <Header onLoad={handleLoad} />
@@ -422,6 +437,10 @@ export default function App() {
           </form>
         </div>
       )}
+      {/* Unified Image Upload */}
+      <label>Upload Image
+        <input type="file" accept="image/*" onChange={handleImageUpload} />
+      </label>
     </div>
   );
 }
