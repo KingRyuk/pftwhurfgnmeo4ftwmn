@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess Who - Quick Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-container { max-width: 600px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #log { border: 1px solid #ddd; padding: 10px; height: 200px; overflow-y: auto; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎮 Guess Who - Quick Connection Test</h1>
+        
+        <div id="status" class="status info">Checking connection...</div>
+        
+        <div>
+            <button onclick="testConnection()">Test Connection</button>
+            <button onclick="testCreateGame()">Test Create Game</button>
+            <button onclick="clearLog()">Clear Log</button>
+            <button onclick="goToMainGame()">Go to Main Game</button>
+        </div>
+        
+        <div id="log"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const log = document.getElementById('log');
+        const status = document.getElementById('status');
+        
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            log.innerHTML += `<div><strong>${timestamp}</strong>: ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function clearLog() {
+            log.innerHTML = '';
+        }
+        
+        function updateStatus(message, type = 'info') {
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function testConnection() {
+            addLog('Testing Socket.IO connection...');
+            
+            if (typeof io === 'undefined') {
+                updateStatus('❌ Socket.IO library not loaded', 'error');
+                addLog('ERROR: Socket.IO library not loaded');
+                return;
+            }
+            
+            const socket = io();
+            
+            socket.on('connect', () => {
+                updateStatus('✅ Connected successfully!', 'success');
+                addLog('SUCCESS: Connected to server');
+            });
+            
+            socket.on('disconnect', () => {
+                updateStatus('❌ Disconnected from server', 'error');
+                addLog('DISCONNECTED: Lost connection to server');
+            });
+            
+            socket.on('connect_error', (error) => {
+                updateStatus('❌ Connection failed', 'error');
+                addLog('ERROR: Connection failed - ' + error);
+            });
+        }
+        
+        function testCreateGame() {
+            addLog('Testing game creation...');
+            
+            const socket = io();
+            
+            socket.on('connect', () => {
+                addLog('Connected, sending create-game event...');
+                socket.emit('create-game', { boardId: 'classic' });
+            });
+            
+            socket.on('game-created', (data) => {
+                addLog('SUCCESS: Game created with code ' + data.gameCode);
+                updateStatus('✅ Game creation works!', 'success');
+            });
+            
+            socket.on('error', (error) => {
+                addLog('ERROR: Game creation failed - ' + error);
+                updateStatus('❌ Game creation failed', 'error');
+            });
+        }
+        
+        function goToMainGame() {
+            window.location.href = '/';
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            addLog('Page loaded, running diagnostics...');
+            addLog('Current URL: ' + window.location.href);
+            
+            // Test 1: Check if server is responding
+            addLog('Testing server connectivity...');
+            fetch('/api/test')
+                .then(response => response.json())
+                .then(data => {
+                    addLog('✅ Server is responding: ' + data.message);
+                    
+                    // Test 2: Check Socket.IO library
+                    if (typeof io !== 'undefined') {
+                        addLog('✅ Socket.IO library loaded successfully');
+                        testConnection();
+                    } else {
+                        addLog('❌ Socket.IO library not found');
+                        updateStatus('❌ Socket.IO library not loaded', 'error');
+                    }
+                })
+                .catch(error => {
+                    addLog('❌ Server not responding: ' + error.message);
+                    updateStatus('❌ Server not responding', 'error');
+                });
+        });
+    </script>
+</body>
+</html>

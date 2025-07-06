@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess Who Game</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Main Menu Screen -->
+        <div id="main-menu" class="screen active">
+            <div class="menu-container">
+                <h1 class="game-title">Guess Who?</h1>
+                <div class="menu-buttons">
+                    <button id="play-btn" class="menu-button">Play</button>
+                    <button id="support-btn" class="menu-button">Support Me on Ko-fi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Board Selection Screen -->
+        <div id="board-selection" class="screen">
+            <div class="board-container">
+                <h2>Choose a Board</h2>
+                <div id="boards-list" class="boards-grid">
+                    <!-- Boards will be populated by JavaScript -->
+                </div>
+                <button id="back-to-main-btn" class="back-button">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <button id="pause-btn" class="pause-button">⏸️</button>
+            </div>
+            <div class="game-board">
+                <div id="character-grid" class="character-grid">
+                    <!-- Characters will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Pause Menu -->
+        <div id="pause-menu" class="modal">
+            <div class="modal-content">
+                <h3>Game Paused</h3>
+                <div class="menu-buttons">
+                    <button id="resume-btn" class="menu-button">Resume</button>
+                    <button id="quit-to-main-btn" class="menu-button">Quit to Main Menu</button>
+                    <button id="more-games-btn" class="menu-button">More Games</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Scripts -->
+    <script src="js/boards.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/debug.js"></script>
+</body>
+</html>

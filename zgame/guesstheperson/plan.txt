@@ -1,0 +1,17 @@
+a game called guess the person.
+
+so theres a main menu you start on, and you can click play or support me on kofi. if they press play it takes them to a screen that asks them to join a game or host a game.
+if they choose host a game it should show a load of guess who boards, and its scrollable. it should be pictures that i can choose for the board thumbnail when creating the board. and the board name. and how many characters are in it.
+each guess who board should be programmed in a way where its easy for me to add more boards, change pictures, and change names. in a diffrent file.
+once they choose a board it should give them a code, and when someone clicks join a game it should ask them for a code, and if they put in the correct code it should take them to the game.
+
+the game
+it should say be a big list of characetrs with pictures. on a guess who board like thing. and when you click on one they flip over.
+and if you click on a fliped over character they should go back. each player has their own board. 
+
+there should also be a puase button, and when pressed there should be a quit to main menu button, and a more games button.
+
+this should not include that built in browser notifaction thing.
+
+
+characters will grey out when they are fliped over. and when they turn back they will get their colour back.

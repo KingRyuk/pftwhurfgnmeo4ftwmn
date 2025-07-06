@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guess Who - Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        #log { border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: auto; font-family: monospace; background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Guess Who - Connection Test</h1>
+        
+        <div id="connection-status" class="status info">
+            Connecting to server...
+        </div>
+        
+        <div>
+            <button onclick="testCreateGame()">Test Create Game</button>
+            <button onclick="testJoinGame()">Test Join Game</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+        
+        <h3>Connection Log:</h3>
+        <div id="log"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const log = document.getElementById('log');
+        const status = document.getElementById('connection-status');
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.innerHTML = `<strong>${timestamp}</strong> - ${message}`;
+            entry.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#6c757d';
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function clearLog() {
+            log.innerHTML = '';
+        }
+        
+        // Socket event handlers
+        socket.on('connect', () => {
+            status.className = 'status success';
+            status.textContent = '✅ Connected to server successfully!';
+            addLog('Connected to server', 'success');
+        });
+        
+        socket.on('disconnect', () => {
+            status.className = 'status error';
+            status.textContent = '❌ Disconnected from server';
+            addLog('Disconnected from server', 'error');
+        });
+        
+        socket.on('game-created', (data) => {
+            addLog(`Game created successfully! Code: ${data.gameCode}`, 'success');
+        });
+        
+        socket.on('game-joined', (data) => {
+            addLog(`Joined game successfully! Code: ${data.gameData.gameCode}`, 'success');
+        });
+        
+        socket.on('join-error', (data) => {
+            addLog(`Join error: ${data.error}`, 'error');
+        });
+        
+        socket.on('player-joined', (data) => {
+            addLog('Another player joined the game', 'success');
+        });
+        
+        socket.on('error', (data) => {
+            addLog(`Error: ${data.error}`, 'error');
+        });
+        
+        // Test functions
+        let testGameCode = null;
+        
+        function testCreateGame() {
+            addLog('Testing game creation...');
+            socket.emit('create-game', { boardId: 'classic' });
+        }
+        
+        function testJoinGame() {
+            if (!testGameCode) {
+                addLog('No game code available. Create a game first!', 'error');
+                return;
+            }
+            addLog(`Testing join game with code: ${testGameCode}`);
+            socket.emit('join-game', { gameCode: testGameCode });
+        }
+        
+        // Store game code when created
+        socket.on('game-created', (data) => {
+            testGameCode = data.gameCode;
+            addLog(`Game created successfully! Code: ${data.gameCode}`, 'success');
+        });
+        
+        addLog('Test page loaded. Connecting to server...');
+    </script>
+</body>
+</html>
