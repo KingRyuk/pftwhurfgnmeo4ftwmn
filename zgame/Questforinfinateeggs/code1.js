@@ -66,6 +66,19 @@ if (isConditionTrue_0) {
 }
 
 
+{
+
+
+let isConditionTrue_0 = false;
+isConditionTrue_0 = false;
+isConditionTrue_0 = gdjs.evtTools.runtimeScene.sceneJustBegins(runtimeScene);
+if (isConditionTrue_0) {
+{gdjs.evtTools.sound.playSound(runtimeScene, "IDDQD 👾 (16-Bit Arcade No Copyright Music).mp3", false, 100, 1);
+}}
+
+}
+
+
 };
 
 gdjs.cutsceneCode.func = function(runtimeScene) {

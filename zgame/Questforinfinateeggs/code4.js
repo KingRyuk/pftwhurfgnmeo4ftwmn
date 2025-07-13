@@ -17,6 +17,7 @@ gdjs.copyArray(runtimeScene.getObjects("cut_scene"), gdjs.ending_322Code.GDcut_9
 {for(var i = 0, len = gdjs.ending_322Code.GDcut_9595sceneObjects1.length ;i < len;++i) {
     gdjs.ending_322Code.GDcut_9595sceneObjects1[i].play();
 }
+}{gdjs.evtTools.sound.playSound(runtimeScene, "Punch Out 👾 (16-Bit Arcade No Copyright Music).mp3", false, 100, 1);
 }}
 
 }

@@ -17,6 +17,7 @@ gdjs.copyArray(runtimeScene.getObjects("ening_video"), gdjs.ending_321Code.GDeni
 {for(var i = 0, len = gdjs.ending_321Code.GDening_9595videoObjects1.length ;i < len;++i) {
     gdjs.ending_321Code.GDening_9595videoObjects1[i].play();
 }
+}{gdjs.evtTools.sound.playSound(runtimeScene, "1UP 👾 (16-Bit Arcade No Copyright Music)2.mp3", false, 100, 1);
 }}
 
 }

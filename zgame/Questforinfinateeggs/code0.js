@@ -67,7 +67,18 @@ gdjs.copyArray(runtimeScene.getObjects("YellowButton"), gdjs.Main_32menuCode.GDY
 {for(var i = 0, len = gdjs.Main_32menuCode.GDYellowButtonObjects1.length ;i < len;++i) {
     gdjs.Main_32menuCode.GDYellowButtonObjects1[i].hide();
 }
+}{gdjs.evtTools.sound.playSound(runtimeScene, "Press Play 👾 (16-Bit Arcade No Copyright Music).mp3", true, 100, 1);
 }}
+
+}
+
+
+{
+
+
+let isConditionTrue_0 = false;
+{
+}
 
 }
 
