@@ -320,7 +320,7 @@ gdjs.evtsExt__BehaviorRemapper__RemapForPlatformer.RemapForPlatformer.prototype.
 
 let isConditionTrue_0 = false;
 isConditionTrue_0 = false;
-{isConditionTrue_0 = eventsFunctionContext.getOnceTriggers().triggerOnce(15304548);
+{isConditionTrue_0 = eventsFunctionContext.getOnceTriggers().triggerOnce(15304452);
 }
 if (isConditionTrue_0) {
 {eventsFunctionContext.getObjects("Object")[0].getBehavior(eventsFunctionContext.getBehaviorName("Behavior"))._setUp(eventsFunctionContext.getArgument("up"))
