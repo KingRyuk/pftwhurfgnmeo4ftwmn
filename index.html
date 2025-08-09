@@ -214,6 +214,16 @@
       <img src="https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png" alt="Pizza Baker">
       <p>Pizza Baker</p>
     </div>
+    <div class="game-card" data-categories="Action,High Score,Animal"
+         onclick="window.location='play/Dragon.html'">
+      <img src="https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png" alt="Dragon">
+      <p>Dragon</p>
+    </div>
+    <div class="game-card" data-categories="Classic,Two-Player"
+         onclick="window.location='play/Guesstheperson.html'">
+      <img src="https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png" alt="Guess the Person">
+      <p>Guess the Person</p>
+    </div>
   </div>
 </section>
 <script>
@@ -223,11 +233,14 @@
 
   function filterGames() {
     const searchTerm = searchInput.value.toLowerCase();
-    const activeCategory = document.querySelector('.category-button.active')?.dataset.category || 'All Games';
+  const activeCategory = document.querySelector('.category-button.active')?.dataset.category || 'All Games';
 
     games.forEach(game => {
       const title = game.innerText.toLowerCase();
-      const categories = game.dataset.categories.toLowerCase().split(',');
+      const categories = game.dataset.categories
+        .toLowerCase()
+        .split(',')
+        .map(s => s.trim());
 
       const matchesSearch = title.includes(searchTerm);
       const matchesCategory = activeCategory === 'All Games' || categories.includes(activeCategory.toLowerCase());
@@ -248,6 +261,24 @@
       filterGames();
     });
   });
+
+  // Support pre-selecting a category via URL, e.g., index.html?category=Cooking#games
+  (function applyCategoryFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const categoryParam = params.get('category');
+    if (!categoryParam) return;
+    const target = Array.from(categoryButtons).find(btn => (btn.dataset.category || '').toLowerCase() === categoryParam.toLowerCase());
+    if (target) {
+      categoryButtons.forEach(btn => btn.classList.remove('active'));
+      target.classList.add('active');
+      filterGames();
+      // If not already at #games, scroll into view politely
+      const gamesSection = document.getElementById('games');
+      if (gamesSection && location.hash !== '#games') {
+        gamesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  })();
 </script>
 
 <section id="about" class="about-section">
