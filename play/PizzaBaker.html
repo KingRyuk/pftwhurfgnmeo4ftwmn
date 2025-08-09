@@ -3,73 +3,253 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pizza Baker</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="style.css">
+  <title>Guess the Person</title>
   <link rel="icon" href="../logo/favicon.ico" type="image/x-icon">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #222;
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header img.logo {
+      height: 50px;
+    }
+    nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .game-frame-wrapper {
+      position: relative;
+      width: 100%;
+      background: black;
+      aspect-ratio: 16 / 9;
+      border: 2px solid #2a9d8f;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .game-frame-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .game-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+    .fullscreen-btn {
+      background: #00a99d;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .fullscreen-btn:hover {
+      background: #00c7b8;
+    }
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .volume-control input[type=range] {
+      width: 150px;
+    }
+    .game-title {
+      font-size: 2em;
+      margin: 0;
+    }
+    .tag-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: #2a9d8f;
+      padding: 6px 10px;
+      border-radius: 20px;
+      text-decoration: none;
+      color: white;
+      font-size: 0.9em;
+    }
+    .tag:hover {
+      background: #38c7b3;
+    }
+    .game-description {
+      background: #181818;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #b697c2;
+    }
+    footer {
+      background: #222;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      margin-top: 30px;
+    }
+  </style>
 </head>
-<body style="background: #232323; margin:0;">
-  <header>
-    <a href="../index.html" class="logo-link">
-      <img src="../logo/2.png" alt="WolfLight" class="logo" />
-    </a>
-    <nav>
-      <a href="../index.html">Home</a>
-      <a href="../../Games/Index.html">Games</a>
-      <a href="../../About/index.html">About</a>
-    </nav>
-  </header>
-  <main>
-    <div class="play-container">
-      <iframe class="game-iframe" src="../../zgame/Pizza%20Baker/index.html" allowfullscreen></iframe>
-      <h1 class="game-title">Pizza Baker</h1>
-      <div class="tag-list">
-        <a class="tag" href="../../Games/Index.html?category=High%20Scoring%20Games">High Scoring Games</a>
-        <a class="tag" href="../../Games/Index.html?category=Cooking%20Games">Cooking Games</a>
-        <button id="fullscreen-btn" class="fullscreen-btn" title="Full Screen">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="2" width="6" height="2" rx="1" fill="#40815d"/>
-            <rect x="2" y="2" width="2" height="6" rx="1" fill="#40815d"/>
-            <rect x="12" y="2" width="6" height="2" rx="1" fill="#40815d"/>
-            <rect x="16" y="2" width="2" height="6" rx="1" fill="#40815d"/>
-            <rect x="2" y="16" width="6" height="2" rx="1" fill="#40815d"/>
-            <rect x="2" y="12" width="2" height="6" rx="1" fill="#40815d"/>
-            <rect x="12" y="16" width="6" height="2" rx="1" fill="#40815d"/>
-            <rect x="16" y="12" width="2" height="6" rx="1" fill="#40815d"/>
-          </svg>
-          Full Screen
-        </button>
-      </div>
-      <div class="game-description">
-        Pizza Baker is a game where you must Bake the correct Pizzas, or you will be fired. your goal is to make as much money as you can from selling pizzas, and last as many days as possible without being fired.</p>
-        <div class="game-dates" style="margin-top:16px; font-size:0.95em; color:#bbddd1;">
-          <div>Date Published: 19/06/2025</div>
-          <div>Last Updated: 19/06/2025</div>
-        </div>
+<body>
+
+<header>
+  <a href="../index.html" class="logo-link">
+    <img src="../logo/2.png" alt="WolfLight" class="logo" />
+  </a>
+  <nav>
+  <a href="../index.html">Home</a>
+  <a href="../index.html#games">Games</a>
+  <a href="../index.html#about">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="game-container">
+    <div class="game-frame-wrapper">
+      <iframe id="gameIframe" src="../zgame/Pizza Baker/index.html" allowfullscreen></iframe>
+    </div>
+
+    <div class="game-controls">
+      <button id="fullscreen-btn" class="fullscreen-btn">Full Screen</button>
+      <div class="volume-control">
+        <label for="volume-slider">Volume:</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1">
       </div>
     </div>
-  </main>
-  <script>
-    // Prevent arrow keys from scrolling the page
-    window.addEventListener('keydown', function(e) {
-      // 37: left, 38: up, 39: right, 40: down
-      if ([37, 38, 39, 40].includes(e.keyCode)) {
-        e.preventDefault();
-      }
-    }, { passive: false });
 
-    // Fullscreen button logic
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
-    const gameIframe = document.querySelector('.game-iframe');
-    fullscreenBtn.addEventListener('click', function() {
-      if (gameIframe.requestFullscreen) {
-        gameIframe.requestFullscreen();
-      } else if (gameIframe.webkitRequestFullscreen) {
-        gameIframe.webkitRequestFullscreen();
-      } else if (gameIframe.msRequestFullscreen) {
-        gameIframe.msRequestFullscreen();
+    <h1 class="game-title">Pizza Baker</h1>
+
+    <div class="tag-list" id="tagList">
+      <!-- Tags will be populated automatically from main index -->
+    </div>
+
+    <div class="game-description">
+      <p>Make the correct Pizzas, and try not to get fired.</p>
+      <div style="margin-top:16px; font-size:0.95em; color:#bbddd1;">
+        <div>Date Published: 19/06/2025</div>
+        <div>Last Updated: 19/06/2025</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 WolfLight. All rights reserved.</p>
+</footer>
+
+<script>
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  const gameIframe = document.getElementById('gameIframe');
+  const volumeSlider = document.getElementById('volume-slider');
+  const tagListEl = document.getElementById('tagList');
+
+  fullscreenBtn.addEventListener('click', function() {
+    if (gameIframe.requestFullscreen) {
+      gameIframe.requestFullscreen();
+    } else if (gameIframe.webkitRequestFullscreen) {
+      gameIframe.webkitRequestFullscreen();
+    } else if (gameIframe.msRequestFullscreen) {
+      gameIframe.msRequestFullscreen();
+    }
+  });
+
+  // Volume control (works only if iframe game uses HTML5 <audio> or Web Audio API and allows control)
+  volumeSlider.addEventListener('input', function() {
+    try {
+      const iframeDoc = gameIframe.contentWindow.document;
+      const audios = iframeDoc.querySelectorAll('audio');
+      audios.forEach(audio => {
+        audio.volume = parseFloat(volumeSlider.value);
+      });
+    } catch (e) {
+      console.warn("Cannot control volume due to cross-origin restrictions.");
+    }
+  });
+
+  // Populate category tags dynamically by reading from the main index.html
+  // Falls back to default tags if fetching/parsing fails (e.g., when opened via file://)
+  (function populateTags() {
+    const fallbackCategories = ["Cooking", "High Score"]; // shown if fetch fails
+
+  function renderTags(categories) {
+      if (!tagListEl) return;
+      tagListEl.innerHTML = '';
+      categories.forEach(cat => {
+        const a = document.createElement('a');
+        a.className = 'tag';
+    // Link to main index with category pre-selected and jump to games section
+    a.href = `../index.html?category=${encodeURIComponent(cat)}#games`;
+        a.textContent = cat;
+        tagListEl.appendChild(a);
+      });
+    }
+
+    const candidates = [
+      '../index.html',
+      '/index.html',
+      '../../index.html'
+    ];
+
+    function tryNext(i) {
+      if (i >= candidates.length) {
+        renderTags(fallbackCategories);
+        return;
       }
-    });
-  </script>
+      fetch(candidates[i], { credentials: 'same-origin' })
+        .then(resp => {
+          if (!resp.ok) throw new Error('Failed');
+          return resp.text();
+        })
+        .then(htmlText => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(htmlText, 'text/html');
+          const cards = Array.from(doc.querySelectorAll('.game-card'));
+          // Prefer matching by onclick target to this page
+          const match = cards.find(el => (el.getAttribute('onclick') || '').includes('play/Pizza Baker.html'))
+            || cards.find(el => (el.querySelector('p')?.textContent || '').trim().toLowerCase() === 'pizza baker');
+          const data = match?.dataset?.categories || '';
+          const categories = data.split(',').map(s => s.trim()).filter(Boolean);
+          if (categories.length) {
+            renderTags(categories);
+          } else {
+            renderTags(fallbackCategories);
+          }
+        })
+        .catch(() => tryNext(i + 1));
+    }
+
+    tryNext(0);
+  })();
+</script>
+
 </body>
 </html>
