@@ -72,18 +72,27 @@
     }
     .category-buttons {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px 10px; /* row x column gap */
       justify-content: center;
     }
     .category-button {
-      background: #00a99d;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 20px;
-      text-decoration: none;
-      font-weight: bold;
-      border: 2px solid #2a9d8f;
+  background: #00a99d;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  border: 2px solid #2a9d8f;
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto; /* prevent stretching to row width */
+  white-space: nowrap; /* keep each button on one line */
     }
     .category-button:hover {
       background: #00c7b8;
@@ -163,15 +172,15 @@
 </section>
 
 <section class="featured-carousel">
-  <div class="featured-card" onclick="window.location='/play/Questforinfinateeggs.html'">
+  <div class="featured-card" onclick="window.location='play/Questforinfinateeggs.html'">
     <img src="https://i.postimg.cc/pTHDG8CR/Quest-for-infinate-eggs.png" alt="Quest for Infinite Eggs">
     <h3>Quest for Infinite Eggs</h3>
   </div>
-  <div class="featured-card" onclick="window.location='/play/WonkeyPigeon.html'">
+  <div class="featured-card" onclick="window.location='play/WonkeyPigeon.html'">
     <img src="https://i.postimg.cc/mrKJrnsK/Wonkey-Pigeon.png" alt="Wonkey Pigeon">
     <h3>Wonkey Pigeon</h3>
   </div>
-  <div class="featured-card" onclick="window.location='/play/PizzaBaker.html'">
+  <div class="featured-card" onclick="window.location='play/PizzaBaker.html'">
     <img src="https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png" alt="Pizza Baker">
     <h3>Pizza Baker</h3>
   </div>
@@ -199,28 +208,28 @@
   </div>
 
   <div class="game-grid" id="gameGrid">
-    <div class="game-card" data-categories="Cooking,Animal,High Score"
-         onclick="window.location='/play/Questforinfinateeggs.html'">
+  <div class="game-card" data-categories="Cooking,Animal,High Score"
+     onclick="window.location='play/Questforinfinateeggs.html'">
       <img src="https://i.postimg.cc/pTHDG8CR/Quest-for-infinate-eggs.png" alt="Quest for Infinite Eggs">
       <p>Quest for Infinite Eggs</p>
     </div>
-    <div class="game-card" data-categories="Action,Two-Player,Classic"
-         onclick="window.location='/play/WonkeyPigeon.html'">
+  <div class="game-card" data-categories="Action,Two-Player,Classic"
+     onclick="window.location='play/WonkeyPigeon.html'">
       <img src="https://i.postimg.cc/mrKJrnsK/Wonkey-Pigeon.png" alt="Wonkey Pigeon">
       <p>Wonkey Pigeon</p>
     </div>
-    <div class="game-card" data-categories="Cooking,Puzzle,Educational"
-         onclick="window.location='/play/PizzaBaker.html'">
+  <div class="game-card" data-categories="Cooking,Puzzle,Educational"
+     onclick="window.location='play/PizzaBaker.html'">
       <img src="https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png" alt="Pizza Baker">
       <p>Pizza Baker</p>
     </div>
-    <div class="game-card" data-categories="Action,High Score,Animal"
-         onclick="window.location='/play/Dragon.html'">
+  <div class="game-card" data-categories="Action,High Score,Animal"
+     onclick="window.location='play/Dragon.html'">
       <img src="https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png" alt="Dragon">
       <p>Dragon</p>
     </div>
-    <div class="game-card" data-categories="Classic,Two-Player"
-         onclick="window.location='/play/Guesstheperson.html'">
+  <div class="game-card" data-categories="Classic,Two-Player"
+     onclick="window.location='play/GuessthePerson.html'">
       <img src="https://i.postimg.cc/5tZJsJF3/Pizza-Baker.png" alt="Guess the Person">
       <p>Guess the Person</p>
     </div>
