@@ -135,7 +135,7 @@
 <main>
   <div class="game-container">
     <div class="game-frame-wrapper">
-      <iframe id="gameIframe" src="../zgame/WarriorCatsPlanner/index.html" allowfullscreen></iframe>
+  <iframe id="gameIframe" title="Warrior Cats Planner game" src="../zgame/WarriorCatsPlanner/index.html?v=1" allowfullscreen></iframe>
     </div>
 
     <div class="game-controls">
@@ -171,6 +171,31 @@
   const gameIframe = document.getElementById('gameIframe');
   const volumeSlider = document.getElementById('volume-slider');
   const tagListEl = document.getElementById('tagList');
+  // Validate and set the correct iframe src if the current one resolves to the homepage
+  (function ensureGameIframe() {
+    const candidates = [
+      '../zgame/WarriorCatsPlanner/index.html',
+      '../zgame/WarriorCatsPlanner/index.html?v=' + Date.now(),
+      '../../zgame/WarriorCatsPlanner/index.html'
+    ];
+    const marker = 'Warrior Cats Planner';
+    function tryPath(i) {
+      if (i >= candidates.length) return;
+      fetch(candidates[i], { credentials: 'same-origin' })
+        .then(r => r.text())
+        .then(t => {
+          if (t.includes(marker)) {
+            if (!gameIframe.src.includes(candidates[i])) {
+              gameIframe.src = candidates[i];
+            }
+          } else {
+            tryPath(i + 1);
+          }
+        })
+        .catch(() => tryPath(i + 1));
+    }
+    tryPath(0);
+  })();
 
   fullscreenBtn.addEventListener('click', function() {
     if (gameIframe.requestFullscreen) {
