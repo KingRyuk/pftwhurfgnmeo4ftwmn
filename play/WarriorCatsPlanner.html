@@ -234,8 +234,8 @@
           const doc = parser.parseFromString(htmlText, 'text/html');
           const cards = Array.from(doc.querySelectorAll('.game-card'));
           // Prefer matching by onclick target to this page
-          const match = cards.find(el => (el.getAttribute('onclick') || '').includes('play/Pizza Baker.html'))
-            || cards.find(el => (el.querySelector('p')?.textContent || '').trim().toLowerCase() === 'pizza baker');
+          const match = cards.find(el => (el.getAttribute('onclick') || '').includes('play/WarriorCatsPlanner.html'))
+            || cards.find(el => (el.querySelector('p')?.textContent || '').trim().toLowerCase() === 'warrior cats planner');
           const data = match?.dataset?.categories || '';
           const categories = data.split(',').map(s => s.trim()).filter(Boolean);
           if (categories.length) {
