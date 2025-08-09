@@ -173,12 +173,15 @@
   const tagListEl = document.getElementById('tagList');
   // Validate and set the correct iframe src if the current one resolves to the homepage
   (function ensureGameIframe() {
+    // If it's already pointing to WC.html, don't touch it
+    if ((gameIframe.src || '').includes('/WC.html')) return;
     const candidates = [
-      '../zgame/WarriorCatsPlanner/index.html',
-      '../zgame/WarriorCatsPlanner/index.html?v=' + Date.now(),
-      '../../zgame/WarriorCatsPlanner/index.html'
+      '../zgame/WarriorCatsPlanner/WC.html',
+      '../zgame/WarriorCatsPlanner/WC.html?v=' + Date.now(),
+      '../../zgame/WarriorCatsPlanner/WC.html'
     ];
-    const marker = 'Warrior Cats Planner';
+    // Use a unique marker that only exists in WC.html to avoid matching the main homepage
+    const marker = 'id="deadCatsContainer"';
     function tryPath(i) {
       if (i >= candidates.length) return;
       fetch(candidates[i], { credentials: 'same-origin' })
