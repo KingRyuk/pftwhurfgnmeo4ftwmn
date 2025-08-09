@@ -198,7 +198,7 @@
   // Populate category tags dynamically by reading from the main index.html
   // Falls back to default tags if fetching/parsing fails (e.g., when opened via file://)
   (function populateTags() {
-    const fallbackCategories = ["Action", "High Score", "Animal"]; // shown if fetch fails
+    const fallbackCategories = ["Classic", "Two-Player"]; // shown if fetch fails
 
   function renderTags(categories) {
       if (!tagListEl) return;
@@ -213,7 +213,6 @@
       });
     }
 
-    // Try to fetch the main index and extract Dragon's categories from its game card
     const candidates = [
       '../index.html',
       '/index.html',
