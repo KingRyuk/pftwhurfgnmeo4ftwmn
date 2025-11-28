@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Character Tracker</title>
+<style>
+ html { background:black; }
+ body {
+   font-family: "Orbitron", monospace;
+   background: black;
+   color: #00ff9d;
+   margin:0;
+   overflow-x:hidden;
+ }
+ header {
+   background:#001b12;
+   color:#00ffcc;
+   padding:10px 20px;
+   display:flex;
+   justify-content:space-between;
+   align-items:center;
+   box-shadow:0 0 15px #00ff9d inset;
+ }
+ #settingsBtn, #saveBtn, #loadBtn {
+   background:#003827;
+   color:#00ffcc;
+   border:1px solid #00ff9d;
+   padding:8px 12px;
+   border-radius:6px;
+   cursor:pointer;
+   margin-left:5px;
+   text-shadow:0 0 5px #00ff9d;
+ }
+ #settingsBtn:hover, #saveBtn:hover, #loadBtn:hover {
+   background:#00593a;
+ }
+ #characterList {
+   padding:20px;
+   display:flex;
+   flex-wrap:wrap;
+   gap:15px;
+ }
+ .charCard {
+   background:#001a12;
+   width:180px;
+   padding:10px;
+   border-radius:10px;
+   box-shadow:0 0 10px #00ff9d;
+   cursor:pointer;
+   text-align:center;
+   color:#00ffcc;
+   transition:0.2s;
+ }
+ .charCard:hover {
+   box-shadow:0 0 20px #00ff9d;
+   transform:scale(1.05);
+ }
+ .charCard img {
+   width:100%;
+   height:160px;
+   object-fit:cover;
+   border-radius:8px;
+   box-shadow:0 0 10px #00ff9d;
+ }
+ #addCharBtn {
+   margin:20px;
+   padding:10px 15px;
+   font-size:16px;
+   cursor:pointer;
+   background:#003827;
+   border:1px solid #00ff9d;
+   color:#00ffcc;
+   text-shadow:0 0 5px #00ff9d;
+ }
+ .modal {
+   position:fixed;
+   inset:0;
+   background:rgba(0, 20, 10, 0.9);
+   display:none;
+   justify-content:center;
+   align-items:center;
+   backdrop-filter:blur(5px);
+ }
+ .modalContent {
+   background:#001a12;
+   padding:20px;
+   border-radius:10px;
+   width:450px;
+   max-height:90vh;
+   overflow:auto;
+   color:#00ffcc;
+   border:1px solid #00ff9d;
+   box-shadow:0 0 20px #00ff9d;
+ }
+ input, select {
+   background:black;
+   color:#00ff9d;
+   border:1px solid #00ff9d;
+   padding:5px;
+ }
+ button {
+   background:#003827;
+   border:1px solid #00ff9d;
+   color:#00ffcc;
+   margin-top:5px;
+   cursor:pointer;
+ }
+ button:hover {
+   background:#00593a;
+ }
+ video, audio {
+   width:100%;
+   margin-top:5px;
+   box-shadow:0 0 10px #00ff9d;
+ }
+ img {
+   max-width:100%;
+   border-radius:8px;
+   box-shadow:0 0 10px #00ff9d;
+ }
+</style>
+</head>
+<body>
+<header>
+ <h2>Character Tracker</h2>
+ <div>
+   <button id="saveBtn">💾 Save</button>
+   <button id="loadBtn">📁 Load</button>
+   <button id="settingsBtn">⚙️ Settings</button>
+ </div>
+</header>
+<button id="addCharBtn">+ Add Character</button>
+<div id="characterList"></div>
+
+<div id="settingsModal" class="modal">
+ <div class="modalContent">
+   <h3>Customize Fields</h3>
+   <div id="fieldsContainer"></div>
+   <button id="addFieldBtn">+ Add Field</button>
+   <br><br>
+   <button onclick="saveSettings()">Save</button>
+   <button onclick="closeSettings()">Close</button>
+ </div>
+</div>
+
+<div id="charModal" class="modal">
+ <div class="modalContent">
+   <h3 id="charModalTitle">New Character</h3>
+   <div id="charFields"></div>
+   <button onclick="saveCharacter()">Save Character</button>
+   <button onclick="closeCharModal()">Close</button>
+ </div>
+</div>
+
+<script>
+let settings = JSON.parse(localStorage.getItem("charSettings")) || [
+ { name:"Name", type:"text" },
+ { name:"Age", type:"number" },
+ { name:"Image", type:"image" }
+];
+let characters = [];
+let activeCharacterIndex = null;
+let tempMediaStore = {};
+
+document.getElementById('settingsBtn').onclick = () => openSettings();
+document.getElementById('addFieldBtn').onclick = () => { settings.push({ name:"New Field", type:"text" }); renderSettings(); };
+document.getElementById('addCharBtn').onclick = () => openCharModal();
+
+document.getElementById('saveBtn').onclick = () => {
+ const data = JSON.stringify({ settings, characters });
+ const blob = new Blob([data], {type:"application/json"});
+ const a = document.createElement('a');
+ a.href = URL.createObjectURL(blob);
+ a.download = "characters.json";
+ a.click();
+};
+
+document.getElementById('loadBtn').onclick = () => {
+ const input = document.createElement('input');
+ input.type = 'file';
+ input.accept = 'application/json';
+ input.onchange = e => {
+   const file = e.target.files[0];
+   const reader = new FileReader();
+   reader.onload = () => {
+     const loaded = JSON.parse(reader.result);
+     settings = loaded.settings;
+     characters = loaded.characters;
+     localStorage.setItem('charSettings', JSON.stringify(settings));
+     renderCharacters();
+   };
+   reader.readAsText(file);
+ };
+ input.click();
+};
+
+function openSettings(){ document.getElementById('settingsModal').style.display='flex'; renderSettings(); }
+function closeSettings(){ document.getElementById('settingsModal').style.display='none'; }
+
+function renderSettings(){
+ const cont = document.getElementById('fieldsContainer');
+ cont.innerHTML='';
+ settings.forEach((f,i) => {
+   cont.innerHTML += `
+   <div class='fieldRow'>
+     <input value="${f.name}" onchange="settings[${i}].name=this.value">
+     <select onchange="settings[${i}].type=this.value">
+       <option value='text' ${f.type==='text'?'selected':''}>Text</option>
+       <option value='number' ${f.type==='number'?'selected':''}>Number</option>
+       <option value='image' ${f.type==='image'?'selected':''}>Image</option>
+       <option value='audio' ${f.type==='audio'?'selected':''}>Audio</option>
+       <option value='video' ${f.type==='video'?'selected':''}>Video</option>
+     </select>
+     <button onclick='deleteField(${i})'>❌</button>
+   </div>`;
+ });
+}
+function deleteField(i){ settings.splice(i,1); renderSettings(); }
+function saveSettings(){ localStorage.setItem("charSettings", JSON.stringify(settings)); closeSettings(); renderCharacters(); }
+
+function openCharModal(index=null){
+ activeCharacterIndex = index;
+ document.getElementById('charModal').style.display='flex';
+ tempMediaStore = {};
+ const cont = document.getElementById('charFields');
+ cont.innerHTML='';
+ let c = index!==null ? characters[index].fields : {};
+ settings.forEach(s => {
+   if(['image','audio','video'].includes(s.type)){
+     cont.innerHTML += `<div class='profileField'>${s.name}: <input type='file' accept='${s.type}/*' onchange='encodeMedia(this,"${s.name}")'></div>`;
+     if(c[s.name]){
+       if(s.type==='image') cont.innerHTML += `<img src='${c[s.name]}' />`;
+       if(s.type==='audio') cont.innerHTML += `<audio controls src='${c[s.name]}'></audio>`;
+       if(s.type==='video') cont.innerHTML += `<video controls src='${c[s.name]}'></video>`;
+     }
+   } else {
+     cont.innerHTML += `<div class='profileField'>${s.name}: <input id='fld_${s.name}' value='${c[s.name]||""}'></div>`;
+   }
+ });
+}
+function closeCharModal(){ document.getElementById('charModal').style.display='none'; }
+
+function encodeMedia(input, fieldName){
+ const file = input.files[0];
+ const reader = new FileReader();
+ reader.onload = () => tempMediaStore[fieldName] = reader.result;
+ reader.readAsDataURL(file);
+}
+
+function saveCharacter(){
+ const data = {};
+ settings.forEach(s => {
+   if(['image','audio','video'].includes(s.type)) data[s.name] = tempMediaStore[s.name] || (activeCharacterIndex!==null ? characters[activeCharacterIndex].fields[s.name] : '');
+   else data[s.name] = document.getElementById('fld_'+s.name)?.value || '';
+ });
+ if(activeCharacterIndex!==null) characters[activeCharacterIndex].fields = data;
+ else characters.push({ fields:data });
+ renderCharacters();
+ closeCharModal();
+}
+
+function renderCharacters(){
+ const list = document.getElementById('characterList'); list.innerHTML='';
+ characters.forEach((c,i) => {
+   const card = document.createElement('div');
+   card.className='charCard';
+   let img = c.fields['Image'] ? `<img src='${c.fields['Image']}'>` : `<div style='height:140px;background:#ccc;border-radius:8px;'></div>`;
+   card.innerHTML = `${img}<h4>${c.fields['Name']||'Unnamed'}</h4>`;
+   card.onclick = () => openCharModal(i);
+   list.appendChild(card);
+ });
+}
+</script>
+</body>
+</html>
